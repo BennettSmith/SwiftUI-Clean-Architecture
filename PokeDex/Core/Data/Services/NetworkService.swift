@@ -1,5 +1,5 @@
 //
-//  NetworkUtils.swift
+//  NetworkService.swift
 //  PokeDex
 //
 //  Created by Muhammad Adha Fajri Jonison on 27/08/23.
@@ -7,12 +7,14 @@
 
 import Foundation
 
-class NetworkUtils {
-    static let shared = NetworkUtils()
-    
-    func fetch<T: Codable>(from url: URL) async throws -> T {
+protocol NetworkServiceProtocol {
+    func fetch<T: Codable>(from url: URL, timeoutInterval: Double) async throws -> T
+}
+
+class NetworkService: NetworkServiceProtocol {
+    func fetch<T: Codable>(from url: URL, timeoutInterval: Double = 15.0) async throws -> T {
         var request = URLRequest(url: url)
-        request.timeoutInterval = Constants.pokeApiTimeoutInterval
+        request.timeoutInterval = timeoutInterval
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
