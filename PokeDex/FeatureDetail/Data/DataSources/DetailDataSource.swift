@@ -8,11 +8,13 @@
 import Foundation
 
 class DetailDataSource {
+    let networkService = NetworkService()
+
     func fetchPokemonDetail(id: Int) async throws -> PokemonDetailReponseModel {
-        guard let url: URL = Constants.APIEndpoint.getPokemonDetails(id: id).url else {
+        guard let url: URL = PokeAPI.Endpoint.getPokemonDetails(id: id).url else {
             throw URLError(.badURL)
         }
         
-        return try await NetworkUtils.shared.fetch(from: url)
+        return try await networkService.fetch(from: url)
     }
 }
