@@ -11,10 +11,10 @@ import Foundation
 class PokemonExploreViewModel: ObservableObject {
     private let getPokemonListUseCase: GetPokemonListUseCase = GetPokemonListUseCase(pokeDexRepository: ExploreRepository.shared)
     
-    @Published var pokemonList: [PokemonModel] = [PokemonModel]()
+    @Published var pokemonList: [PokemonListItem] = [PokemonListItem]()
     @Published var offset: Int = 20
     
-    func handleOnAppear(pokemon: PokemonModel) {
+    func handleOnAppear(pokemon: PokemonListItem) {
         guard pokemonList.last == pokemon else { return }
         
         increaseOffset(value: Constants.pokeApiPokemonListlimit)
@@ -24,12 +24,15 @@ class PokemonExploreViewModel: ObservableObject {
     func loadPokemonList() {
         Task {
             do {
-                let pokemonEntityList = try await getPokemonListUseCase.execute(limit: 20, offset: offset)
-                pokemonList += pokemonEntityList.compactMap({ pokemon in PokemonModel(pokemon: pokemon) })
+                try await getPokemonListUseCase.execute(limit: 20, offset: offset, presenter: presentPokemonListPage)
             } catch {
                 print(error.localizedDescription)
             }
         }
+    }
+    
+    private func presentPokemonListPage(offset: Int, items: [PokemonListItem]) {
+        pokemonList += items.compactMap({ $0 })
     }
     
     private func increaseOffset(value: Int) {

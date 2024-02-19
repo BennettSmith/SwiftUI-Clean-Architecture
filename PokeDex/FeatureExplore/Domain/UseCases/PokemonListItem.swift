@@ -1,5 +1,5 @@
 //
-//  PokemonModel.swift
+//  PokemonListItem.swift
 //  PokeDex
 //
 //  Created by Muhammad Adha Fajri Jonison on 31/08/23.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PokemonModel: Hashable {
+struct PokemonListItem: Hashable {
     let id: Int
     let name: String
     var imageURL: URL?

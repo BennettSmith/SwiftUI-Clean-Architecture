@@ -8,12 +8,12 @@
 import Foundation
 
 struct PokemonDetailModel {
-    let pokemon: PokemonModel
+    let pokemon: PokemonListItem
     let height: Int
     let weight: Int
     
     init?(pokemonDetail: PokemonDetailEntity) {
-        guard let pokemon = PokemonModel(pokemon: pokemonDetail.pokemon) else {
+        guard let pokemon = PokemonListItem(pokemon: pokemonDetail.pokemon) else {
             return nil
         }
         
