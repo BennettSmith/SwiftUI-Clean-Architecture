@@ -24,18 +24,20 @@ class PokemonExploreViewModel: ObservableObject {
     func loadPokemonList() {
         Task {
             do {
-                try await getPokemonListUseCase.execute(limit: 20, offset: offset, presenter: presentPokemonListPage)
+                try await getPokemonListUseCase.execute(limit: 20, offset: offset, presenter: self)
             } catch {
                 print(error.localizedDescription)
             }
         }
     }
     
-    private func presentPokemonListPage(offset: Int, items: [PokemonListItem]) {
-        pokemonList += items.compactMap({ $0 })
-    }
-    
     private func increaseOffset(value: Int) {
         offset += value
+    }
+}
+
+extension PokemonExploreViewModel: GetPokemonListPresenter {
+    @MainActor func presentPokemonListPage(offset: Int, items: [PokemonListItem]) {
+        pokemonList += items.compactMap({ $0 })
     }
 }
