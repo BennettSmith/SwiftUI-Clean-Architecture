@@ -7,6 +7,10 @@
 
 import Foundation
 
+protocol GetPokemonDetailPresenter {
+    @MainActor func presentPokemon(details: PokemonDetails)
+}
+
 class GetPokemonDetailUseCase {
     let repository: DetailRepositoryProtocol
     
@@ -14,11 +18,11 @@ class GetPokemonDetailUseCase {
         self.repository = repository
     }
     
-    func execute(id: Int) async throws -> PokemonDetailEntity? {
-        guard let pokemonDetail: PokemonDetailEntity = try await repository.fetchPokemonDetail(id: id) else {
-            return nil
+    func execute(id: Int, presenter: GetPokemonDetailPresenter) async throws {
+        if let pokemonDetailEntity = try await repository.fetchPokemonDetail(id: id) {
+            if let pokemonDetails = PokemonDetails(details: pokemonDetailEntity) {
+                await presenter.presentPokemon(details: pokemonDetails)
+            }
         }
-        
-        return pokemonDetail
     }
 }

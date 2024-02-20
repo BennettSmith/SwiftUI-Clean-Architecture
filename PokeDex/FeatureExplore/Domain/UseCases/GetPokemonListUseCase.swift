@@ -7,17 +7,20 @@
 
 import Foundation
 
+protocol GetPokemonListPresenter {
+    @MainActor func presentPokemonListPage(offset: Int, items: [PokemonListItem])
+}
+
 class GetPokemonListUseCase {
-    typealias PokemonListPagePresenter = @MainActor (_ offset: Int, _ items: [PokemonListItem]) -> Void
     let repository: ExploreRepositoryProtocol
     
     init(pokeDexRepository: ExploreRepositoryProtocol) {
         self.repository = pokeDexRepository
     }
     
-    func execute(limit: Int = 20, offset: Int, presenter presentPokemonListPage: @escaping PokemonListPagePresenter) async throws -> Void {
+    func execute(limit: Int = 20, offset: Int, presenter: GetPokemonListPresenter) async throws -> Void {
         let entities = try await repository.fetchPokemons(limit: limit, offset: offset)
         let models = entities.compactMap({ entity in PokemonListItem(pokemon: entity)})
-        await presentPokemonListPage(offset, models)
+        await presenter.presentPokemonListPage(offset: offset, items: models)
     }
 }

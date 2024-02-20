@@ -11,19 +11,21 @@ import Foundation
 class PokemonDetailViewModel: ObservableObject {
     let getPokemonDetailUseCase = GetPokemonDetailUseCase(repository: DetailRepository())
     
-    @Published var pokemonDetail: PokemonDetailModel?
+    @Published var pokemonDetail: PokemonDetails?
     
     func loadDetail(id: Int) {
         Task {
             do {
-                guard let pokemonDetailEntity: PokemonDetailEntity = try await getPokemonDetailUseCase.execute(id: id) else {
-                    return
-                }
-                
-                self.pokemonDetail = PokemonDetailModel(pokemonDetail: pokemonDetailEntity)
+                try await getPokemonDetailUseCase.execute(id: id, presenter: self)
             } catch {
                 print("Error: \(error)")
             }
         }
+    }
+}
+
+extension PokemonDetailViewModel: GetPokemonDetailPresenter {
+    func presentPokemon(details: PokemonDetails) {
+        self.pokemonDetail = details
     }
 }
